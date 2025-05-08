@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import jwt from 'jsonwebtoken';
+import * as jose from 'jose';
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value;
 
   if (!token) {
@@ -10,7 +10,11 @@ export function middleware(request: NextRequest) {
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET!);
+    // Convert JWT_SECRET to Uint8Array for jose
+    const secretKey = new TextEncoder().encode(process.env.JWT_SECRET!);
+
+    // Verify the token
+    await jose.jwtVerify(token, secretKey);
     return NextResponse.next();
   } catch {
     return NextResponse.redirect(new URL('/login', request.url));

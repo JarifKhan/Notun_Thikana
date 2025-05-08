@@ -6,16 +6,16 @@ import mongoose from "mongoose";
 // GET all comments for a specific forum post
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     // Check if id exists before using it
-    if (!context.params || !context.params.id) {
+    if (!params || !params.id) {
       console.error('Missing ID parameter');
       return NextResponse.json({ error: 'Missing ID parameter' }, { status: 400 });
     }
 
-    const { id } = context.params;
+    const { id } = params;
     console.log(`GET request for comments of forum post with ID: ${id}`);
 
     // Validate ID format

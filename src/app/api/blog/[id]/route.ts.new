@@ -5,11 +5,11 @@ import { NextResponse } from 'next/server';
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   await connectToDatabase();
 
-  const { id } = context.params;
+  const { id } = params;
 
   if (!id || !mongoose.Types.ObjectId.isValid(id)) {
     return new Response("Invalid blog ID format", { status: 400 });
@@ -35,11 +35,11 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   await connectToDatabase();
 
-  const { id } = context.params;
+  const { id } = params;
   console.log("PATCH request for ID:", id);
 
   if (!id || !mongoose.Types.ObjectId.isValid(id)) {
@@ -122,5 +122,3 @@ export async function PATCH(
     return new Response("Failed to update blog", { status: 500 });
   }
 }
-
-

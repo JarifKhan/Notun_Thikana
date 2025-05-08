@@ -6,13 +6,13 @@ import { updateTrendingTopic } from '../../trending/route';
 
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     await dbConnect();
-    console.log(`GET request for forum post with ID: ${context.params.id}`);
+    console.log(`GET request for forum post with ID: ${params.id}`);
 
-    const { id } = context.params;
+    const { id } = params;
 
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       console.error(`Invalid forum post ID format: ${id}`);
@@ -36,13 +36,13 @@ export async function GET(
 
 export async function PATCH(
   request: Request,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     await dbConnect();
-    console.log(`PATCH request for forum post with ID: ${context.params.id}`);
+    console.log(`PATCH request for forum post with ID: ${params.id}`);
 
-    const { id } = context.params;
+    const { id } = params;
 
     if (!id || !mongoose.Types.ObjectId.isValid(id)) {
       console.error(`Invalid forum post ID format: ${id}`);
