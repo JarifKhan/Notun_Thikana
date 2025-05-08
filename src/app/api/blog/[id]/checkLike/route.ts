@@ -1,0 +1,50 @@
+import { NextResponse } from 'next/server';
+import Blog from '@/models/blog';
+import dbConnect from "@/lib/dbConnect";
+import mongoose from "mongoose";
+
+export async function GET(
+  request: Request,
+  context: { params: { id: string } }
+) {
+  try {
+    await dbConnect();
+    
+    const { id } = context.params;
+    const url = new URL(request.url);
+    const userId = url.searchParams.get('userId');
+    
+    console.log(`Checking if user ${userId} has liked blog ${id}`);
+    
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      console.error(`Invalid blog ID format: ${id}`);
+      return NextResponse.json({ error: 'Invalid blog ID format' }, { status: 400 });
+    }
+    
+    if (!userId) {
+      console.error('No user ID provided');
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+    
+    const blog = await Blog.findById(id);
+    
+    if (!blog) {
+      console.error(`Blog not found with ID: ${id}`);
+      return NextResponse.json({ error: 'Blog not found' }, { status: 404 });
+    }
+    
+    // Check if the user has liked this blog
+    const hasLiked = blog.likedBy && blog.likedBy.includes(userId);
+    
+    return NextResponse.json({ 
+      hasLiked,
+      likes: blog.likes
+    });
+  } catch (error) {
+    console.error("Error checking like status:", error);
+    return NextResponse.json({ 
+      error: 'Failed to check like status',
+      details: error.message 
+    }, { status: 500 });
+  }
+}
